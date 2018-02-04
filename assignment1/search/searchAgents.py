@@ -295,14 +295,27 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Keeps track of all the visited corners
+        cornerState = [False]*len(self.corners)
+
+        # Check if the starting position is at one of the corners
+        if self.startingPosition in self.corners:
+            cornerIdx = self.corners.index(self.startingPosition)
+            cornerState[cornerIdx] = True
+        return (self.startingPosition, cornerState)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        position = state[0]
+        cornerState = state[1]
+        # Shouldn't really need to check again.. but just adding as a safety
+        if position in self.corners:
+            cornerIdx = self.corners.index(position)
+            cornerState[cornerIdx] = True
+        return all(cornerState)           # Returns True if all corners have been visited
 
     def getSuccessors(self, state):
         """
@@ -325,6 +338,20 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            x,y = state[0]
+            cornerState = state[1]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            cost = 1
+            if not self.walls[nextx][nexty]:
+                nextPosition = (nextx, nexty)
+                # Make a copy of the current cornerState and send the updated copy to the successor
+                nextCornerState = cornerState[:]
+                if nextPosition in self.corners:
+                    cornerIdx = self.corners.index(nextPosition)
+                    nextCornerState[cornerIdx] = True
+                nextState = (nextPosition, nextCornerState)
+                successors.append((nextState, action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
