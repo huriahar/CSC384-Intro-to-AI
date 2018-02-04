@@ -302,7 +302,7 @@ class CornersProblem(search.SearchProblem):
         if self.startingPosition in self.corners:
             cornerIdx = self.corners.index(self.startingPosition)
             cornerState[cornerIdx] = True
-        return (self.startingPosition, cornerState)
+        return (self.startingPosition, tuple(cornerState))
 
     def isGoalState(self, state):
         """
@@ -310,7 +310,7 @@ class CornersProblem(search.SearchProblem):
         """
         "*** YOUR CODE HERE ***"
         position = state[0]
-        cornerState = state[1]
+        cornerState = list(state[1])
         # Shouldn't really need to check again.. but just adding as a safety
         if position in self.corners:
             cornerIdx = self.corners.index(position)
@@ -339,7 +339,7 @@ class CornersProblem(search.SearchProblem):
 
             "*** YOUR CODE HERE ***"
             x,y = state[0]
-            cornerState = state[1]
+            cornerState = list(state[1])
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             cost = 1
@@ -350,7 +350,7 @@ class CornersProblem(search.SearchProblem):
                 if nextPosition in self.corners:
                     cornerIdx = self.corners.index(nextPosition)
                     nextCornerState[cornerIdx] = True
-                nextState = (nextPosition, nextCornerState)
+                nextState = (nextPosition, tuple(nextCornerState))
                 successors.append((nextState, action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
@@ -387,7 +387,39 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    if problem.isGoalState(state):
+        return 0
+
+    position = state[0]
+    cornerState = state[1]
+
+    # Get all the unvisited corners
+    unvisitedCorners = []
+    for i in range(len(corners)):
+        if not cornerState[i]:
+            unvisitedCorners.append(corners[i])
+
+    cost = 0
+    # For each of the unvisited corners, calculate the total cost by finding the cost 
+    # to the closest corner from current position and then updating current location
+    # and keep finding closest cost till all corners have been visited
+    while (len(unvisitedCorners)):
+        minDistance, closestCorner = findClosestCorner(position, unvisitedCorners)
+        cost += minDistance
+        position = closestCorner
+        unvisitedCorners.remove(closestCorner)
+
+    return cost
+
+def findClosestCorner (startPosition, unvisitedCorners):
+    minDistance = float('inf')
+    minCorner = ()
+    for corner in unvisitedCorners:
+        distance = util.manhattanDistance(startPosition, corner)
+        if distance < minDistance:
+            minDistance = distance
+            minCorner = corner
+    return minDistance, minCorner
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"

@@ -88,8 +88,8 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
 
-    frontier = util.Stack()         # Open list
-    visited = []                    # Closed list
+    frontier = util.Stack()                     # Open list
+    visited = []                                # Closed list
     startPosition = problem.getStartState()
     # Keep track of current position, parent's position and the path so far
     startNode = (startPosition, None, [])
@@ -105,7 +105,7 @@ def depthFirstSearch(problem):
         # Mark node as visited
         visited.append(position)
         if (problem.isGoalState(position)):
-            return path          # Path so far i.e. list of actions
+            return path                         # Path so far i.e. list of actions
 
         successors = problem.getSuccessors(position)
         for successor in successors:
@@ -151,7 +151,7 @@ def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     frontier = util.PriorityQueue()
-    seen = dict()                   # seen is dict storing min cost
+    seen = dict()                                   # seen is dict storing min cost
     startPosition = problem.getStartState()
     seen[startPosition] = 0
 
@@ -164,7 +164,7 @@ def uniformCostSearch(problem):
         path = node[2]
         cost = node[3]
 
-        if cost <= seen[position]:      # Only expand if cheapest path
+        if cost <= seen[position]:                  # Only expand if cheapest path
             if (problem.isGoalState(position)):
                 return path
 
