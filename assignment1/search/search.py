@@ -105,12 +105,13 @@ def depthFirstSearch(problem):
         # Mark node as visited
         visited.append(position)
         if (problem.isGoalState(position)):
-            return node[2]          # Path so far i.e. list of actions
+            return path          # Path so far i.e. list of actions
 
         successors = problem.getSuccessors(position)
         for successor in successors:
             succPosition = successor[0]
             succDirection = successor[1]
+            # Path checking
             if succPosition not in visited:
                 frontier.push((succPosition, position, path + [succDirection]))
 
@@ -119,12 +120,64 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.Queue()
+    visited = []
+    startPosition = problem.getStartState()
+    startNode = (startPosition, None, [])
+    frontier.push(startNode)
+
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        position = node[0]
+        path = node[2]
+        if position in visited:
+            continue
+
+        visited.append(position)
+        if (problem.isGoalState(position)):
+            return path
+
+        successors = problem.getSuccessors(position)
+        for successor in successors:
+            succPosition = successor[0]
+            succDirection = successor[1]
+            # Path checking
+            if succPosition not in visited:
+                frontier.push((succPosition, position, path + [succDirection]))
+
+    return []
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    seen = dict()                   # seen is dict storing min cost
+    startPosition = problem.getStartState()
+    seen[startPosition] = 0
+
+    startNode = (startPosition, None, [], 0)
+    frontier.push(startNode, startNode[3])
+
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        position = node[0]
+        path = node[2]
+        cost = node[3]
+
+        if cost <= seen[position]:      # Only expand if cheapest path
+            if (problem.isGoalState(position)):
+                return path
+
+            successors = problem.getSuccessors(position)
+            for successor in successors:
+                succPosition = successor[0]
+                succDirection = successor[1]
+                succCost = successor[2]
+                if succPosition not in seen or (cost + succCost < seen[succPosition]):
+                    succNode = (succPosition, position, path + [succDirection], cost + succCost)
+                    frontier.push(succNode, succNode[3])
+                    seen[succPosition] = cost + succCost
+    return []
 
 def nullHeuristic(state, problem=None):
     """
