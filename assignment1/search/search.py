@@ -155,7 +155,7 @@ def uniformCostSearch(problem):
     startPosition = problem.getStartState()
     seen[startPosition] = 0
 
-    startNode = (startPosition, None, [], 0)
+    startNode = (startPosition, None, [], 0)        # curPosition, parent's postition, path, cost
     frontier.push(startNode, startNode[3])
 
     while not frontier.isEmpty():
@@ -189,7 +189,41 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    frontier = util.PriorityQueue()
+    seen = dict()
+    startPosition = problem.getStartState()
+    seen[startPosition] = 0
+
+    g = 0
+    h = heuristic(startPosition, problem)
+    f = g + h
+
+    startNode = (startPosition, None, [], g)        # curPosition, parent's postition, path, cost
+    frontier.push(startNode, f)
+
+    while not frontier.isEmpty():
+        node = frontier.pop()
+        position = node[0]
+        path = node[2]
+        cost = node[3]
+
+        if cost <= seen[position]:
+            if (problem.isGoalState(position)):
+                return path
+
+            successors = problem.getSuccessors(position)
+            for successor in successors:
+                succPosition = successor[0]
+                succDirection = successor[1]
+                succCost = successor[2]
+                if succPosition not in seen or (cost + succCost < seen[succPosition]):
+                    g = cost + succCost
+                    h = heuristic(succPosition, problem)
+                    f = g + h
+                    succNode = (succPosition, position, path + [succDirection], g)
+                    frontier.push(succNode, f)
+                    seen[succPosition] = g
+    return []
 
 
 # Abbreviations
