@@ -1,0 +1,69 @@
+Question 1) Short Answer Questions
+
+(1)
+(1a) The branching factor of the successor function if Pacman is in the corneris 2. As the Pacman
+is surrounded by two walls, there are only 2 possible options where it can move next. Thus, b = 2
+
+(1b) The branching factor of the successor function if Pacman is in the middle is 4. The Pacman
+can move (at most) left, right, up and down. Thus, b = 4
+
+(1c) Assuming the optimal path is the longest one possible, the maximum possible depth
+of search space is
+Search space consists of N*N blocks. Exploring all nodes before you find goal should total to N*N
+1 + b + b^2 + b^3 + ...... + b^d + b(b^d - 1) = O(b^(d+1))
+O(b^(d+1)) = N*N => d = O(log(N*N)/log(b) - 1)
+Thus, the max possible depth is log(N*N)/log(4) assuming b = 4
+
+(2) cmin <= c <= cmax. Assume no cycle checking. ctotal -> Optimal cost solution; b = 4
+Define the maximum number of paths on the OPEN list, n, at the time the solution is found.
+Your answer should be in terms of the parameters defined above. Explain your answer. (4
+points total)
+
+At the time the solution is found, all paths with c < ctotal would've already been explored and the
+only paths on the list will have cost ctotal <= c <= cmax
+1 + b + b^2
+
+
+(3)
+(3a) f(n) = g(n) + h(n)     -> Yields an optimal solution
+Step1: If h(n) is monotone, then the values of f(n) along any path are nondecreasing.
+Suppose n' is a succesor of n. Then g(n') = g(n) + c(n, n')
+f(n') = g(n') + h(n') = g(n) + c(n,n') + h(n') >= g(n) + h(n) = f(n)
+Step2: Now, whenever A* selects a node for expansion, the optimal path to that node has
+been found. If this was not the case, there exists another node n' on the frontier, which is on 
+the optimal path from start node to n. As f is nondecreasing along any path, n' would have a lower 
+f-cost than n and should've been selected first. Thus, the sequence of nodes expanded by A* using 
+f(n) = g(n) + h(n) is optimal. 
+
+(3b) f(n) = g(n) + 3*h(n)   -> Yields an optimal solution
+Step1: If h(n) is monotone, then the values of f(n) along any path are nondecreasing.
+Suppose n' is a succesor of n. Then g(n') = g(n) + c(n, n')
+f(n') = g(n') + 3*h(n') = g(n) + c(n, n') + 3*h(n') >= g(n) + 3*h(n) = f(n)
+Step2: Now, whenever A* selects a node for expansion, the optimal path to that node has
+been found. If this was not the case, there exists another node n' on the frontier, which is on 
+the optimal path from start node to n. As f is nondecreasing along any path, n' would have a lower 
+f-cost than n and should've been selected first. Thus, the sequence of nodes expanded by A* using 
+f(n) = g(n) + 3*h(n) is optimal. 
+
+(3c) f(n) = 3*g(n) + h(n)   -> Yields an optimal solution
+Step1: If h(n) is monotone, then the values of f(n) along any path are nondecreasing.
+Suppose n' is a succesor of n. Then g(n') = g(n) + c(n, n')
+f(n') = 3*g(n') + h(n') = 3*g(n) + 3*c(n, n') + h(n') >= 3*g(n) + h(n) = f(n)
+Now, whenever A* selects a node for expansion, the optimal path to that node has
+been found. If this was not the case, there exists another node n' on the frontier, which is on 
+the optimal path from start node to n. As f is nondecreasing along any path, n' would have a lower 
+f-cost than n and should've been selected first. Thus, the sequence of nodes expanded by A* using 
+f(n) = 3*g(n) + h(n) is optimal. 
+
+(4)
+(4a) As h1 dominates h2, it is always more efficient to use h1 over h2. Pacman expanding nodes
+using h1 will never expand more nodes than Pacman using h2. This results in lesser number of nodes
+being expanded in total, which might be a better idea when memory is a constraint. Better 
+heuritics might also take a longer time to do the computation, so a scenario where decision does 
+not have to be made quickly suits best. Example, eating all the food in the maze
+
+(4b) Pacman might use heuristic h2 when time is a constraint. It might be a better option for 
+Pacman to make a reasonably good guess about the distance estimate sooner than trying to compute a 
+more accurate value. Example, when Pacman is playing against the ghosts, time might be a 
+constraint and expanding nodes using heuristic h2 is better. It is a tradeoff between speed and 
+accuracy.
