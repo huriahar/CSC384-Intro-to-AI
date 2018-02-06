@@ -7,21 +7,23 @@ is surrounded by two walls, there are only 2 possible options where it can move 
 (1b) The branching factor of the successor function if Pacman is in the middle is 4. The Pacman
 can move (at most) left, right, up and down. Thus, b = 4
 
-(1c) Assuming the optimal path is the longest one possible, the maximum possible depth
-of search space is
-Search space consists of N*N blocks. Exploring all nodes before you find goal should total to N*N
-1 + b + b^2 + b^3 + ...... + b^d + b(b^d - 1) = O(b^(d+1))
-O(b^(d+1)) = N*N => d = O(log(N*N)/log(b) - 1)
-Thus, the max possible depth is log(N*N)/log(4) assuming b = 4
+(1c) Assuming the optimal path is the longest one possible i.e. from one corner of the square to the
+diametrically opposite one. In the worst case, the maximum possible depth of search space will be the 
+maximum number of squares explored i.e. N*N.
 
-(2) cmin <= c <= cmax. Assume no cycle checking. ctotal -> Optimal cost solution; b = 4
-Define the maximum number of paths on the OPEN list, n, at the time the solution is found.
-Your answer should be in terms of the parameters defined above. Explain your answer. (4
-points total)
 
-At the time the solution is found, all paths with c < ctotal would've already been explored and the
-only paths on the list will have cost ctotal <= c <= cmax
-1 + b + b^2
+(2) 
+(2a) The depth of the search tree i.e. d = ctotal/cmin
+Initially, the root node is on the frontier. It is popped off and its 4 successor nodes are
+expanded and put on the frontier. Let's assume the solution path goes through the node which has the 
+maximum heuristic cost (out of the four nodes just added - assuming the worst case). The other three nodes
+are removed from the frontier and expanded (4 nodes each) and put on the frontier. This process continues
+- always assuming the worst case. When the goal node is reached, all nodes in the same level have already been
+expanded. This gives us the equation: (4^(d+1) - 4), where 4 represents b
+Final equation: (4^((ctotal/cmin) + 1) - 4)
+
+(2b) According to the above equation, n = (4^((ctotal/cmin) + 1) - 4)
+Rearranging the terms, ctotal = (log(n+4)/log(4) - 1)*cmin
 
 
 (3)
@@ -35,15 +37,10 @@ the optimal path from start node to n. As f is nondecreasing along any path, n' 
 f-cost than n and should've been selected first. Thus, the sequence of nodes expanded by A* using 
 f(n) = g(n) + h(n) is optimal. 
 
-(3b) f(n) = g(n) + 3*h(n)   -> Yields an optimal solution
-Step1: If h(n) is monotone, then the values of f(n) along any path are nondecreasing.
-Suppose n' is a succesor of n. Then g(n') = g(n) + c(n, n')
-f(n') = g(n') + 3*h(n') = g(n) + c(n, n') + 3*h(n') >= g(n) + 3*h(n) = f(n)
-Step2: Now, whenever A* selects a node for expansion, the optimal path to that node has
-been found. If this was not the case, there exists another node n' on the frontier, which is on 
-the optimal path from start node to n. As f is nondecreasing along any path, n' would have a lower 
-f-cost than n and should've been selected first. Thus, the sequence of nodes expanded by A* using 
-f(n) = g(n) + 3*h(n) is optimal. 
+(3b) f(n) = g(n) + 3*h(n)   -> Does not yield an optimal solution
+Let's say the actual cost from A->B is 2 and h(n) for all nodes is 1. The heuristic prediction
+using the given f(n) will be 3*1 = 3, which overestimates the actual cost. This violates 
+admissibility. The ratio of cost of returned solution/cost of optimal solution = 3 
 
 (3c) f(n) = 3*g(n) + h(n)   -> Yields an optimal solution
 Step1: If h(n) is monotone, then the values of f(n) along any path are nondecreasing.
@@ -55,12 +52,13 @@ the optimal path from start node to n. As f is nondecreasing along any path, n' 
 f-cost than n and should've been selected first. Thus, the sequence of nodes expanded by A* using 
 f(n) = 3*g(n) + h(n) is optimal. 
 
+
 (4)
 (4a) As h1 dominates h2, it is always more efficient to use h1 over h2. Pacman expanding nodes
 using h1 will never expand more nodes than Pacman using h2. This results in lesser number of nodes
 being expanded in total, which might be a better idea when memory is a constraint. Better 
 heuritics might also take a longer time to do the computation, so a scenario where decision does 
-not have to be made quickly suits best. Example, eating all the food in the maze
+not have to be made quickly suits best. Example, eating all the food in the maze.
 
 (4b) Pacman might use heuristic h2 when time is a constraint. It might be a better option for 
 Pacman to make a reasonably good guess about the distance estimate sooner than trying to compute a 
