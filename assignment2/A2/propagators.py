@@ -123,23 +123,21 @@ def prop_GAC(csp, newVar=None):
 
     while len(GACQueue):
         constraint = GACQueue.popleft()
-        for unassignedVariable in constraint.get_unasgn_vars():
-        #for unassignedVariable in constraint.get_scope():
-            for val in unassignedVariable.cur_domain():
-                if not constraint.has_support(unassignedVariable, val):
-                    toPrunePair = (unassignedVariable, val)
-                    print(toPrunePair)
+        for variable in constraint.get_scope():
+            for val in variable.cur_domain():
+                if not constraint.has_support(variable, val):
+                    toPrunePair = (variable, val)
                     if toPrunePair not in valuesToPrune:
                         valuesToPrune.append(toPrunePair)
-                        unassignedVariable.prune_value(val)
+                        variable.prune_value(val)
 
-                    if unassignedVariable.cur_domain_size() == 0:
+                    if variable.cur_domain_size() == 0:
                         # DWO
                         GACQueue.clear()
                         return False, valuesToPrune
                     else:
                         # Add dependent constaints in GACQueue
-                        for dependentConstraint in csp.get_cons_with_var(unassignedVariable):
+                        for dependentConstraint in csp.get_cons_with_var(variable):
                             if dependentConstraint not in GACQueue:
                                 GACQueue.append(dependentConstraint)
 

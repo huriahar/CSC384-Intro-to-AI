@@ -33,6 +33,7 @@ def ord_dh(csp):
             else:
                 degreesOfVariables[variable] += constraint.get_n_unasgn()
 
+    # Return key with maximum value
     return max(degreesOfVariables, key=degreesOfVariables.get)
 
 def ord_mrv(csp):
