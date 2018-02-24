@@ -22,8 +22,18 @@ import random
 from copy import deepcopy
 
 def ord_dh(csp):
-    # TODO! IMPLEMENT THIS!
-    pass
+    # Returns the variable that is involved in the largest number of
+    # constraints on other unassigned variables
+    constraints = csp.get_all_cons()
+    degreesOfVariables = dict()
+    for constraint in constraints:
+        for variable in constraint.get_unasgn_vars():
+            if variable not in degreesOfVariables:
+                degreesOfVariables[variable] = constraint.get_n_unasgn()
+            else:
+                degreesOfVariables[variable] += constraint.get_n_unasgn()
+
+    return max(degreesOfVariables, key=degreesOfVariables.get)
 
 def ord_mrv(csp):
     # Returns the variable with the most constrained current domain
