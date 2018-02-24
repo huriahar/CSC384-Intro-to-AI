@@ -76,8 +76,33 @@ def prop_BT(csp, newVar=None):
     return True, []
 
 def prop_FC(csp, newVar=None):
-    # TODO! IMPLEMENT THIS!
-    pass
+    constraintsToCheck = []
+    valuesToPrune = []
+    if not newVar:
+        # Check all the constraints which have only 1 variable in their scope
+        constraintsToCheck = [constraint for constraint in csp.get_all_cons() if (len(constraint.get_scope()) == 1)]
+    else:
+        # Check for constraints with 1 unassigned variable which have newVar in them
+        constraintsToCheck = csp.get_cons_with_var(newVar)
+
+    for constraint in constraintsToCheck:
+        if constraint.get_n_unasgn() == 1:
+            unassignedVariable = constraint.get_unasgn_vars()[0]
+            for val in unassignedVariable.cur_domain():
+                # If setting unassignedVariable to val together with previous
+                # assignments to variables in scope constraint falsifies the constraint
+                # then remove val from curDom[unassignedVariable]
+                if not constraint.has_support(unassignedVariable, val):
+                    toPrunePair = (unassignedVariable, val)
+                    if toPrunePair not in valuesToPrune:
+                        valuesToPrune.append(toPrunePair)
+                        unassignedVariable.prune_value(val)
+
+            # If curDom[unassignedVariable] = {} -> DWO
+            if unassignedVariable.cur_domain_size() == 0:
+                return False, valuesToPrune
+
+    return True, valuesToPrune
 
 def prop_GAC(csp, newVar=None):
     '''

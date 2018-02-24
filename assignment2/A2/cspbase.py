@@ -29,7 +29,7 @@ Constraint Satisfaction Routines and Objects
 
 4. BT object
     - A class to encapsulate things like statistics and bookeeping for 
-      pruning/unpruning variabel domains. 
+      pruning/unpruning variable domains. 
     - To use the backtracking routine make one of these objects passing the CSP 
       as a parameter. 
     - Then you can invoke the Backtracking Routine (method of BT object).
