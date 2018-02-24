@@ -26,9 +26,11 @@ def ord_dh(csp):
     pass
 
 def ord_mrv(csp):
-    # TODO! IMPLEMENT THIS!
-    pass
-
+    # Returns the variable with the most constrained current domain
+    # (i.e. the variable with the fewest legal values)
+    unassignedVariables = csp.get_all_unasgn_vars()
+    return min(unassignedVariables, key=lambda var: var.cur_domain_size())
+    
 def val_lcv(csp, var):
     # TODO! IMPLEMENT THIS!
     pass
