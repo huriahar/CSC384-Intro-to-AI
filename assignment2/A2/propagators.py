@@ -58,6 +58,8 @@ unassigned variable left
 
 '''
 
+from collections import deque
+
 def prop_BT(csp, newVar=None):
     '''
     Do plain backtracking propagation. That is, do no propagation at all. Just 
@@ -110,5 +112,35 @@ def prop_GAC(csp, newVar=None):
     all constraints. Otherwise we do GAC enforce with constraints containing 
     newVar on GAC Queue.
     '''
-    # TODO! IMPLEMENT THIS!
-    pass
+    constraintsToCheck = []
+    valuesToPrune = []
+    if not newVar:
+        constraintsToCheck = csp.get_all_cons()
+    else:
+        constraintsToCheck = csp.get_cons_with_var(newVar)
+
+    GACQueue = deque(constraintsToCheck)
+
+    while len(GACQueue):
+        constraint = GACQueue.popleft()
+        for unassignedVariable in constraint.get_unasgn_vars():
+        #for unassignedVariable in constraint.get_scope():
+            for val in unassignedVariable.cur_domain():
+                if not constraint.has_support(unassignedVariable, val):
+                    toPrunePair = (unassignedVariable, val)
+                    print(toPrunePair)
+                    if toPrunePair not in valuesToPrune:
+                        valuesToPrune.append(toPrunePair)
+                        unassignedVariable.prune_value(val)
+
+                    if unassignedVariable.cur_domain_size() == 0:
+                        # DWO
+                        GACQueue.clear()
+                        return False, valuesToPrune
+                    else:
+                        # Add dependent constaints in GACQueue
+                        for dependentConstraint in csp.get_cons_with_var(unassignedVariable):
+                            if dependentConstraint not in GACQueue:
+                                GACQueue.append(dependentConstraint)
+
+    return True, valuesToPrune
