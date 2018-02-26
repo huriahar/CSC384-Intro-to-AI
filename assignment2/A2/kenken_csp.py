@@ -46,7 +46,7 @@ def binary_ne_grid(kenken_grid):
         variables.append(var_row)
 
     constraints = []
-    # Add row constraints i.e. 11 != 12 11 != 13 12 != 13 for row1
+    # Add row constraints Ex. 11 != 12 11 != 13 12 != 13 for row1
     for i in range(1, N+1):
         for j in range(1, N+1):
             for k in range(2, N+1):
@@ -55,7 +55,7 @@ def binary_ne_grid(kenken_grid):
                     constraints.append(constraint)
 
 
-    # Add col constraints i.e. 11 != 21 11 != 31 21 != 31
+    # Add col constraints Ex. 11 != 21 11 != 31 21 != 31 for col1
     for i in range(1, N+1):
         for j in range(1, N+1):
             for k in range(2, N+1):
@@ -71,6 +71,7 @@ def binary_ne_grid(kenken_grid):
                 satisfying_tuples.append(tup)
         con.add_satisfying_tuples(satisfying_tuples)
 
+    # Flatten the 2-D variables matrix to a list
     variables = list(itertools.chain(*variables))
 
     # Create CSP
@@ -82,8 +83,45 @@ def binary_ne_grid(kenken_grid):
 
 
 def nary_ad_grid(kenken_grid):
-    # TODO! IMPLEMENT THIS!
-    pass
+    N = kenken_grid[0][0]
+    # Generate the domain
+    domain = list(range(1, N+1))
+
+    # Generate a list of variables
+    variables = []
+    for i in range(1, N+1):
+        var_row = []
+        for j in range(1, N+1):
+            var_row.append(Variable('Var{}{}'.format(i, j), domain))
+        variables.append(var_row)
+
+    constraints = []
+    # Add row constraints i.e. 11 != 12 != 13
+    for row in range(1, N+1):
+        constraint = Constraint("Row{}Con".format(row), variables[row-1])
+        constraints.append(constraint)
+
+    # Add col constraints i.e. 11 != 21 != 31
+    for col in range(1, N+1):
+        constraint = Constraint("Col{}Con".format(col), [row[col-1] for row in variables])
+        constraints.append(constraint)
+
+    # Add satisfying tuples
+    for con in constraints:
+        satisfying_tuples = []
+        for tup in itertools.permutations(domain, N):
+            satisfying_tuples.append(tup)
+        con.add_satisfying_tuples(satisfying_tuples)
+
+    # Flatten the 2-D variables matrix to a list
+    variables = list(itertools.chain(*variables))
+
+    # Create CSP
+    csp = CSP("naryNEKenKen", variables)
+    for con in constraints:
+        csp.add_constraint(con)
+
+    return csp, variables
 
 def kenken_csp_model(kenken_grid):
     # TODO! IMPLEMENT THIS!
