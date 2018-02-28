@@ -127,7 +127,6 @@ def nary_ad_grid(kenken_grid):
     return csp, variables
 
 def kenken_csp_model(kenken_grid):
-    #pass
     N = kenken_grid[0][0]
     # Generate the domain
     domain = list(range(1, N+1))
@@ -187,21 +186,17 @@ def kenken_csp_model(kenken_grid):
                     if functools.reduce(mul, tup) == target and tup not in satisfying_tuples:
                         satisfying_tuples.append(tup)
 
-                constraint.add_satisfying_tuples(satisfying_tuples)
-                constraints.append(constraint)
+            constraint.add_satisfying_tuples(satisfying_tuples)
+            constraints.append(constraint)
 
-        else:       # len(cage) <= 2
+        # len(cage) <= 2
+        else:
             # First element of cage = Variable
             # Second element = value on the variable
             target = cage[-1]
             i = cage[0]//10
             j = cage[0]%10
-            #cageVariable = variables[i-1][j-1]
-            #constraint = Constraint('CageVar{}{}'.format(i, j), cageVariable)
-            #constraint.add_satisfying_tuples((target))
-            #constraints.append(constraint)
-            variables[i-1][j-1] = Variable('V{}{}'.format(i, j), [target])
-
+            variables[i-1][j-1] = Variable('Var{}{}'.format(i, j), [target])
 
     satisfying_tuples = []
     for tup in itertools.permutations(domain, N):
@@ -220,10 +215,10 @@ def kenken_csp_model(kenken_grid):
         constraints.append(constraint)
 
     # Flatten the 2-D variables matrix to a list
-    #variables = list(itertools.chain(*variables))
+    variablesList = list(itertools.chain(*variables))
 
     # Create CSP
-    csp = CSP("KenKenModel", variables)
+    csp = CSP("KenKenModel", variablesList)
     for con in constraints:
         csp.add_constraint(con)
 
