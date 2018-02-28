@@ -43,5 +43,21 @@ def ord_mrv(csp):
     return min(unassignedVariables, key=lambda var: var.cur_domain_size())
     
 def val_lcv(csp, var):
-    # TODO! IMPLEMENT THIS!
-    pass
+    # A value heuristic, that given a variable, chooses the value to be assigned
+    # according to the Least Constraining Value heuristic
+    # The list is ordered by the value that rules out the fewest values in the
+    # remaining variables (i.e. the variable that gives the most flexibility later on)
+    # to the value that rules out the most
+    varRuleOutCount = dict()
+    constraints = csp.get_cons_with_var(var)
+    for value in var.cur_domain():
+        ruleOutCount = 0
+        var.assign(value)
+        for constraint in constraints:
+            for unassignedVariable in constraint.get_unasgn_vars():
+                for unassignedValue in unassignedVariable.cur_domain():
+                    if not constraint.has_support(unassignedVariable, unassignedValue):
+                        varRuleOutCount += 1
+        var.unassign()
+        varRuleOutCount[value] = ruleOutCount
+    return sorted(varRuleOutCount, key=varRuleOutCount.get)
