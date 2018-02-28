@@ -104,13 +104,13 @@ def nary_ad_grid(kenken_grid):
     for tup in itertools.permutations(domain, N):
         satisfying_tuples.append(tup)
 
-    # Add row constraints i.e. 11 != 12 != 13
+    # Add row constraints i.e. 11 != 12 != 13 for row1
     for row in range(1, N+1):
         constraint = Constraint("Row{}Con".format(row), variables[row-1])
         constraint.add_satisfying_tuples(satisfying_tuples)
         constraints.append(constraint)
 
-    # Add col constraints i.e. 11 != 21 != 31
+    # Add col constraints i.e. 11 != 21 != 31 for col1
     for col in range(1, N+1):
         constraint = Constraint("Col{}Con".format(col), [row[col-1] for row in variables])
         constraint.add_satisfying_tuples(satisfying_tuples)
@@ -202,13 +202,13 @@ def kenken_csp_model(kenken_grid):
     for tup in itertools.permutations(domain, N):
         satisfying_tuples.append(tup)
 
-    # Add row constraints i.e. 11 != 12 != 13
+    # Add row constraints i.e. 11 != 12 != 13 for row1
     for row in range(1, N+1):
         constraint = Constraint("Row{}Con".format(row), variables[row-1])
         constraint.add_satisfying_tuples(satisfying_tuples)
         constraints.append(constraint)
 
-    # Add col constraints i.e. 11 != 21 != 31
+    # Add col constraints i.e. 11 != 21 != 31 for col1
     for col in range(1, N+1):
         constraint = Constraint("Col{}Con".format(col), [row[col-1] for row in variables])
         constraint.add_satisfying_tuples(satisfying_tuples)
