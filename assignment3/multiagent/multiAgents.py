@@ -74,35 +74,35 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         if successorGameState.isWin():
-          return sys.maxint
+            return sys.maxint
         if successorGameState.isLose() or action == 'Stop':
-          return -sys.maxint
+            return -sys.maxint
 
         heuristic = 0
         foodDistances = [manhattanDistance(newPos, food) for food in newFood.asList()]
 
         # Food have scaling factor 8 - closer the food, better the score
         if foodDistances:
-          avgFoodDistance = float(sum(foodDistances))/len(foodDistances)
-          heuristic += 8.0/(avgFoodDistance)
+            avgFoodDistance = float(sum(foodDistances))/len(foodDistances)
+            heuristic += 8.0/(avgFoodDistance)
 
         ghostDistances = []
         # Only look at ghosts which do not have scared timer running
         for idx, ghost in enumerate(newGhostStates):
-          ghostDistance = manhattanDistance(newPos, ghost.getPosition())
-          if newScaredTimes[idx] == 0:
-            ghostDistances.append(ghostDistance)
-          else:
-            ghostDistances.append(2*ghostDistance)
+            ghostDistance = manhattanDistance(newPos, ghost.getPosition())
+            if newScaredTimes[idx] == 0:
+                ghostDistances.append(ghostDistance)
+            else:
+                ghostDistances.append(2*ghostDistance)
 
         if ghostDistances:
-          avgGhostDistance = sum(ghostDistances)/len(ghostDistances)
-          heuristic += 1.0/avgGhostDistance
+            avgGhostDistance = sum(ghostDistances)/len(ghostDistances)
+            heuristic += 1.0/avgGhostDistance
 
         heuristic += successorGameState.getScore()
 
         if newScaredTimes:
-          heuristic += min(newScaredTimes)
+            heuristic += min(newScaredTimes)
         return heuristic
 
 def scoreEvaluationFunction(currentGameState):
@@ -161,29 +161,29 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
     def minimax(self, gameState, depth, agent):
       if depth == self.depth or gameState.isWin() or gameState.isLose():
-        return self.evaluationFunction(gameState)
+          return self.evaluationFunction(gameState)
 
       # Crossed depth level once all agents have been evaluated
       nextAgent = (agent + 1) % gameState.getNumAgents()
       nextDepth = depth
       if nextAgent == 0:
-        nextDepth += 1
+          nextDepth += 1
 
       succUtilities = []
       legalActions = gameState.getLegalActions(agent)
       for action in legalActions:
-        succUtility = self.minimax(gameState.generateSuccessor(agent, action), nextDepth, nextAgent)
-        succUtilities.append(succUtility)
+          succUtility = self.minimax(gameState.generateSuccessor(agent, action), nextDepth, nextAgent)
+          succUtilities.append(succUtility)
 
       # Return the output of Pcman's move
       if agent == 0 and depth == 0:
-        idx = succUtilities.index(max(succUtilities))
-        return legalActions[idx]
+          idx = succUtilities.index(max(succUtilities))
+          return legalActions[idx]
 
       if agent == 0:
-        return max(succUtilities)
+          return max(succUtilities)
       else:
-        return min(succUtilities)
+          return min(succUtilities)
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -194,8 +194,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
           Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.alphabeta(gameState, 0, 0, -sys.maxint, sys.maxint)
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
