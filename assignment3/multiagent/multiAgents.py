@@ -14,7 +14,7 @@
 
 from util import manhattanDistance
 from game import Directions
-import random, util
+import random, util, sys
 
 from game import Agent
 
@@ -73,8 +73,33 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        if successorGameState.isWin():
+          return sys.maxint
+        if successorGameState.isLose() or action == 'Stop':
+          return -sys.maxint
+
+        heuristic = 0
+        foodDistances = [manhattanDistance(newPos, food) for food in newFood.asList()]
+
+        # Food have scaling factor 8 - closer the food, better the score
+        if foodDistances:
+          avgFoodDistance = float(sum(foodDistances))/len(foodDistances)
+          heuristic += 8.0/(avgFoodDistance)
+
+        activeGhostDistances = []
+        # Only look at ghosts which do not have scared timer running
+        for idx, ghost in enumerate(newGhostStates):
+          if newScaredTimes[idx] == 0:
+            activeGhostDistances.append(manhattanDistance(newPos, ghost.getPosition()))
+
+        if activeGhostDistances:
+            heuristic += 1.0/min(activeGhostDistances)
+
+        heuristic += successorGameState.getScore()
+
+        if newScaredTimes:
+          heuristic += min(newScaredTimes)
+        return heuristic
 
 def scoreEvaluationFunction(currentGameState):
     """
