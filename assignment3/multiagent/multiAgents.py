@@ -86,14 +86,18 @@ class ReflexAgent(Agent):
           avgFoodDistance = float(sum(foodDistances))/len(foodDistances)
           heuristic += 8.0/(avgFoodDistance)
 
-        activeGhostDistances = []
+        ghostDistances = []
         # Only look at ghosts which do not have scared timer running
         for idx, ghost in enumerate(newGhostStates):
+          ghostDistance = manhattanDistance(newPos, ghost.getPosition())
           if newScaredTimes[idx] == 0:
-            activeGhostDistances.append(manhattanDistance(newPos, ghost.getPosition()))
+            ghostDistances.append(ghostDistance)
+          else:
+            ghostDistances.append(2*ghostDistance)
 
-        if activeGhostDistances:
-            heuristic += 1.0/min(activeGhostDistances)
+        if ghostDistances:
+          avgGhostDistance = sum(ghostDistances)/len(ghostDistances)
+          heuristic += 1.0/avgGhostDistance
 
         heuristic += successorGameState.getScore()
 
