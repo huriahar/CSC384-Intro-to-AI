@@ -157,8 +157,33 @@ class MinimaxAgent(MultiAgentSearchAgent):
           gameState.getNumAgents():
             Returns the total number of agents in the game
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return self.minimax(gameState, 0, 0)
+
+    def minimax(self, gameState, depth, agent):
+      if depth == self.depth or gameState.isWin() or gameState.isLose():
+        return self.evaluationFunction(gameState)
+
+      # Crossed depth level once all agents have been evaluated
+      nextAgent = (agent + 1) % gameState.getNumAgents()
+      nextDepth = depth
+      if nextAgent == 0:
+        nextDepth += 1
+
+      succUtilities = []
+      legalActions = gameState.getLegalActions(agent)
+      for action in legalActions:
+        succUtility = self.minimax(gameState.generateSuccessor(agent, action), nextDepth, nextAgent)
+        succUtilities.append(succUtility)
+
+      # Return the output of Pcman's move
+      if agent == 0 and depth == 0:
+        idx = succUtilities.index(max(succUtilities))
+        return legalActions[idx]
+
+      if agent == 0:
+        return max(succUtilities)
+      else:
+        return min(succUtilities)
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
