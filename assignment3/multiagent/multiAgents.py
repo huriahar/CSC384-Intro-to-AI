@@ -11,7 +11,7 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
+from __future__ import print_function
 from util import manhattanDistance
 from game import Directions
 import random, util, sys
@@ -160,30 +160,30 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return self.minimax(gameState, 0, 0)
 
     def minimax(self, gameState, depth, agent):
-      if depth == self.depth or gameState.isWin() or gameState.isLose():
-          return self.evaluationFunction(gameState)
+        if depth == self.depth or gameState.isWin() or gameState.isLose():
+            return self.evaluationFunction(gameState)
 
-      # Crossed depth level once all agents have been evaluated
-      nextAgent = (agent + 1) % gameState.getNumAgents()
-      nextDepth = depth
-      if nextAgent == 0:
-          nextDepth += 1
+        # Crossed depth level once all agents have been evaluated
+        nextAgent = (agent + 1) % gameState.getNumAgents()
+        nextDepth = depth
+        if nextAgent == 0:
+            nextDepth += 1
 
-      succUtilities = []
-      legalActions = gameState.getLegalActions(agent)
-      for action in legalActions:
-          succUtility = self.minimax(gameState.generateSuccessor(agent, action), nextDepth, nextAgent)
-          succUtilities.append(succUtility)
+        succUtilities = []
+        legalActions = gameState.getLegalActions(agent)
+        for action in legalActions:
+            succUtility = self.minimax(gameState.generateSuccessor(agent, action), nextDepth, nextAgent)
+            succUtilities.append(succUtility)
 
-      # Return the output of Pcman's move
-      if agent == 0 and depth == 0:
-          idx = succUtilities.index(max(succUtilities))
-          return legalActions[idx]
+        # Return the output of Pacman's move
+        if agent == 0 and depth == 0:
+            idx = succUtilities.index(max(succUtilities))
+            return legalActions[idx]
 
-      if agent == 0:
-          return max(succUtilities)
-      else:
-          return min(succUtilities)
+        if agent == 0:
+            return max(succUtilities)
+        else:
+            return min(succUtilities)
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -195,6 +195,50 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         return self.alphabeta(gameState, 0, 0, -sys.maxint, sys.maxint)
+
+    # Note: At a max node n, beta is the lowest value of n's siblings seen so far
+    # i.e. siblings to the left of n that have already been searched
+    # alpha is the highest value of n's children examined so far
+    # At a min node n, alpha is the highest value of n's siblings seen so far
+    # i.e. siblings to the left of n that have already been searched
+    # beta is the lowest value of n's children examined so far
+    def alphabeta(self, gameState, depth, agent, alpha, beta):
+        if depth == self.depth or gameState.isWin() or gameState.isLose():
+            return self.evaluationFunction(gameState)
+
+        # Crossed depth level once all agents have been evaluated
+        nextAgent = (agent + 1) % gameState.getNumAgents()
+        nextDepth = depth
+        if nextAgent == 0:
+            nextDepth += 1
+
+        legalActions = gameState.getLegalActions(agent)
+
+        # Return the output of Pacman's move
+        if agent == 0 and depth == 0:
+            succUtilities = []
+            for action in legalActions:
+                succUtility = self.alphabeta(gameState.generateSuccessor(agent, action), nextDepth, nextAgent, alpha, beta)
+                alpha = max(alpha, succUtility)
+                succUtilities.append(succUtility)
+
+            idx = succUtilities.index(max(succUtilities))
+            return legalActions[idx]
+
+        if agent == 0:
+            for action in legalActions:
+                utility = self.alphabeta(gameState.generateSuccessor(agent, action), nextDepth, nextAgent, alpha, beta)
+                alpha = max(alpha, utility)
+                if beta <= alpha:
+                    break
+            return alpha
+        else:
+            for action in legalActions:
+                utility = self.alphabeta(gameState.generateSuccessor(agent, action), nextDepth, nextAgent, alpha, beta)
+                beta = min(beta, utility)
+                if beta <= alpha:
+                    break
+            return beta
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
