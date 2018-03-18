@@ -211,7 +211,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         nextDepth = depth
         if nextAgent == 0:
             nextDepth += 1
-
         legalActions = gameState.getLegalActions(agent)
 
         # Return the output of Pacman's move
@@ -219,9 +218,10 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             succUtilities = []
             for action in legalActions:
                 succUtility = self.alphabeta(gameState.generateSuccessor(agent, action), nextDepth, nextAgent, alpha, beta)
-                alpha = max(alpha, succUtility)
                 succUtilities.append(succUtility)
-
+                alpha = max(alpha, succUtility)
+                if beta <= alpha:
+                    break
             idx = succUtilities.index(max(succUtilities))
             return legalActions[idx]
 
