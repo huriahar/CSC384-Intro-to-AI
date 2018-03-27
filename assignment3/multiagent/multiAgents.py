@@ -325,10 +325,10 @@ def betterEvaluationFunction(currentGameState):
 
     score = scoreEvaluationFunction(currentGameState)
     score += -1.5*minFoodDistance
-    score += -2.0*(1.0/minActiveGhost)
+    score += -3.0*(1.0/minActiveGhost)
     score += -2.0*minScaredGhost
     score += -20.0*len(capsules)
-    score += -4.0*len(foodPositions)
+    score += -5.0*len(foodPositions)
     return score
 
 # Abbreviation
